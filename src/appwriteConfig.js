@@ -1,10 +1,10 @@
 // src/appwriteConfig.js
-import { Client, Account } from 'appwrite';
+import { Client, Account, Storage } from 'appwrite';
 
-const appwrite = new Client();
-appwrite
-  .setEndpoint('https://cloud.appwrite.io/v1') // Use your Appwrite endpoint
-  .setProject('680db660001e3cdf637b'); // Your project ID
+const client = new Client()
+  .setEndpoint(process.env.REACT_APP_APPWRITE_ENDPOINT)
+  .setProject(process.env.REACT_APP_APPWRITE_PROJECT_ID);
 
-export const account = new Account(appwrite);
-export default appwrite;
+export const account = new Account(client);
+export const storage = new Storage(client);
+export default client;

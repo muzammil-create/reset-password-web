@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { account } from '../appwriteConfig';
 
 function ResetPassword() {
   // Get token from URL
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const token = query.get('token');
+  const userId = query.get('userId');
+const secret = query.get('secret');
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -26,20 +27,21 @@ function ResetPassword() {
       setError('Passwords do not match.');
       return;
     }
-    if (!token) {
+    if (!userId || !secret) {
       setError('Invalid or expired reset link.');
       return;
     }
     setLoading(true);
     try {
-      await axios.post(`/api/auth/reset-password/${token}`, { password });
+      await account.updateRecovery(userId, secret, password, confirmPassword);
       setMessage('Your password has been reset. You can now log in.');
     } catch (err) {
-      setError(err?.response?.data?.message || 'Reset failed.');
+      setError(err?.message || 'Reset failed.');
     } finally {
       setLoading(false);
     }
   };
+
 
   // Optionally, handle invalid token UI here (not required if backend returns error)
 
